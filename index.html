@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>BrailleBoard — Interactive Simulator</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<div class="logo-group">
+					<div class="logo">Braille<span>Board</span></div>
+					<div class="tagline">
+						Open-source refreshable Braille display — built for students
+					</div>
+				</div>
+				<div class="badge-row">
+					<span class="badge badge-purple">SS4T 2025</span>
+					<span class="badge badge-green">Live Demo</span>
+				</div>
+			</header>
+
+			<div class="cost-banner">
+				<div class="cost-card">
+					<div
+						class="cost-val"
+						style="
+							color: var(--muted);
+							text-decoration: line-through;
+							font-size: 20px;
+						"
+					>
+						$3,000+
+					</div>
+					<div class="cost-label">Commercial Braille displays</div>
+				</div>
+				<div class="cost-card highlight">
+					<div class="cost-val green">$72</div>
+					<div class="cost-label">BrailleBoard — 6-cell prototype</div>
+				</div>
+				<div class="cost-card">
+					<div class="cost-val accent">97%</div>
+					<div class="cost-label">Cost reduction</div>
+				</div>
+			</div>
+
+			<div class="input-section">
+				<span class="input-label"
+					>Type anything — watch it translate to Braille</span
+				>
+				<div class="input-row">
+					<textarea
+						id="textInput"
+						placeholder="Type a word, sentence, or your name..."
+						rows="2"
+					></textarea>
+					<button class="translate-btn" onclick="translate()">Translate</button>
+				</div>
+				<div class="quick-btns">
+					<button
+						class="quick-btn"
+						onclick="setExample('I can do this and you will have more from us')"
+					>
+						Grade 2 demo
+					</button>
+					<button
+						class="quick-btn"
+						onclick="setExample('Samsung Solve for Tomorrow')"
+					>
+						Samsung SS4T
+					</button>
+					<button
+						class="quick-btn"
+						onclick="setExample('I need help with this')"
+					>
+						I need help
+					</button>
+					<button
+						class="quick-btn"
+						onclick="setExample('BrailleBoard open source')"
+					>
+						BrailleBoard
+					</button>
+					<button
+						class="quick-btn"
+						onclick="setExample('knowledge is the foundation of education')"
+					>
+						knowledge...
+					</button>
+				</div>
+			</div>
+
+			<div class="display-section">
+				<div class="display-header">
+					<span class="display-title"
+						>Grade 2 Braille — 6-cell prototype simulation</span
+					>
+					<div class="status-row">
+						<div class="status-dot"></div>
+						<span class="status-text" id="statusText">ready</span>
+					</div>
+				</div>
+				<div
+					style="
+						display: flex;
+						gap: 18px;
+						flex-wrap: wrap;
+						margin-bottom: 16px;
+						font-size: 12px;
+						color: var(--muted);
+						align-items: center;
+					"
+				>
+					<span style="display: flex; align-items: center; gap: 5px"
+						><span
+							style="
+								width: 9px;
+								height: 9px;
+								border-radius: 50%;
+								background: var(--dot-up);
+								display: inline-block;
+							"
+						></span
+						>raised pin</span
+					>
+					<span style="display: flex; align-items: center; gap: 5px"
+						><span
+							style="
+								width: 9px;
+								height: 9px;
+								border-radius: 50%;
+								background: var(--dot-down);
+								border: 1px solid #3a3850;
+								display: inline-block;
+							"
+						></span
+						>lowered pin</span
+					>
+					<span style="display: flex; align-items: center; gap: 5px"
+						><span
+							style="
+								width: 12px;
+								height: 12px;
+								border-radius: 3px;
+								border: 1px solid rgba(200, 184, 255, 0.45);
+								display: inline-block;
+							"
+						></span
+						><span style="color: #a090e0">Grade 2 contraction</span>&nbsp;— 1
+						cell = whole word or affix</span
+					>
+					<span style="color: #555070; font-family: monospace; font-size: 11px"
+						>&#8679; = capital &nbsp;|&nbsp; # = number indicator</span
+					>
+				</div>
+				<div class="device-frame">
+					<div class="cells-row" id="cellsRow">
+						<div class="empty-state">
+							Enter text above to see Braille cells animate
+						</div>
+					</div>
+					<div class="device-controls">
+						<button
+							class="hw-btn prev-btn"
+							onclick="prevPage()"
+							title="Previous"
+						></button>
+						<div style="display: flex; align-items: center; gap: 8px">
+							<div class="led"></div>
+							<span class="page-indicator" id="pageIndicator">— / —</span>
+						</div>
+						<button
+							class="hw-btn next-btn"
+							onclick="nextPage()"
+							title="Next"
+						></button>
+					</div>
+				</div>
+			</div>
+
+			<div class="translation-panel">
+				<div class="trans-card">
+					<div class="trans-title">Braille Unicode output</div>
+					<div class="trans-text braille-unicode" id="unicodeOut">—</div>
+				</div>
+				<div class="trans-card">
+					<div class="trans-title">Dot patterns (6-bit per cell)</div>
+					<div class="trans-text dots-text" id="dotsOut">—</div>
+				</div>
+			</div>
+
+			<div class="how-section">
+				<div class="how-title">How BrailleBoard works</div>
+				<div class="how-grid">
+					<div class="how-card">
+						<div class="how-num">01 — INPUT</div>
+						<div class="how-card-title">Text arrives</div>
+						<div class="how-card-body">
+							Any text from a phone app, PC, or tablet sends characters via
+							Bluetooth or USB serial to the Arduino Mega.
+						</div>
+					</div>
+					<div class="how-card">
+						<div class="how-num">02 — TRANSLATE</div>
+						<div class="how-card-title">Python engine converts</div>
+						<div class="how-card-body">
+							Our translation engine maps each character to its 6-dot Braille
+							pattern. Grade 2 contractions compress common words.
+						</div>
+					</div>
+					<div class="how-card">
+						<div class="how-num">03 — DISPLAY</div>
+						<div class="how-card-title">Solenoids raise pins</div>
+						<div class="how-card-body">
+							36 solenoids (6 per cell × 6 cells) physically push pins up or
+							down. The student reads by touch, then taps the advance button for
+							the next 6 characters.
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="footer">
+				<div class="footer-text">
+					Built at a 24-hour hackathon &nbsp;·&nbsp; SS4T themed &nbsp;·&nbsp;
+					Students with Visual Disabilities<br />
+					Hardware:
+					<span
+						>Arduino Mega + 36× solenoids + ULN2803 drivers + 3D-printed
+						housing</span
+					><br />
+					Software:
+					<span>Python + liblouis + PySerial + React Native companion app</span>
+				</div>
+			</div>
+		</div>
+
+		<script src="script.js"></script>
+	</body>
+</html>
